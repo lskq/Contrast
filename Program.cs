@@ -4,7 +4,6 @@ using System.CommandLine;
 
 class Program
 {
-
     static async Task Main(string[] args)
     {
         var firstArgument = new Argument<string>
@@ -46,7 +45,6 @@ class Program
         double l2Luminance = RelativeLuminance(l2Array[0], l2Array[1], l2Array[2]);
 
         return ContrastRatio(l1Luminance, l2Luminance);
-
     }
 
     static double ContrastRatio(double l1, double l2)
@@ -101,7 +99,7 @@ class Program
         }
         else
         {
-            throw new ArgumentException($"ArgumentException: {originalColor}. Not formated like a hex code or comma-separated RGB value.");
+            throw new FormatException($"FormatException: {originalColor}. Not formated like a hex code or comma-separated RGB value.");
         }
     }
 
@@ -113,7 +111,7 @@ class Program
         for (int i = 0; i < 3; i++)
         {
             if (!int.TryParse(rgbStringArray[i], out rgbIntArray[i]) || 0 > rgbIntArray[i] || rgbIntArray[i] > 255)
-                throw new ArgumentException($"ArgumentException: {rgb}. Not a valid RGB value.");
+                throw new FormatException($"FormatException: {rgb}. Not a valid RGB value.");
         }
 
         return rgbIntArray;
@@ -131,9 +129,9 @@ class Program
             {
                 hexIntArray[i / 2] = Convert.ToInt32(hexString, 16);
             }
-            catch
+            catch (FormatException)
             {
-                throw new ArgumentException($"ArgumentException: {hex}. Not a valid hex code.");
+                throw new FormatException($"FormatException: {hex}. Not a valid hex code.");
             }
         }
 

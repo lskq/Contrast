@@ -23,7 +23,14 @@ class Program
 
         rootCommand.SetHandler((firstArgumentValue, secondArgumentValue) =>
         {
-            Console.WriteLine(ContrastRatio(firstArgumentValue, secondArgumentValue));
+            try
+            {
+                Console.WriteLine(ContrastRatio(firstArgumentValue, secondArgumentValue));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         },
         firstArgument, secondArgument);
 
@@ -88,9 +95,13 @@ class Program
         {
             return ParseRGBString(color);
         }
-        else
+        else if (color.Length == 6)
         {
             return ParseHexString(color);
+        }
+        else
+        {
+            throw new ArgumentException($"ArgumentException: {originalColor}. Not formated like a hex code or comma-separated RGB value.");
         }
     }
 
@@ -101,7 +112,8 @@ class Program
 
         for (int i = 0; i < 3; i++)
         {
-            rgbIntArray[i] = int.Parse(rgbStringArray[i]);
+            if (!int.TryParse(rgbStringArray[i], out rgbIntArray[i]) || 0 > rgbIntArray[i] || rgbIntArray[i] > 255)
+                throw new ArgumentException($"ArgumentException: {rgb}. Not a valid RGB value.");
         }
 
         return rgbIntArray;
@@ -114,7 +126,15 @@ class Program
         for (int i = 0; i < 5; i += 2)
         {
             string hexString = hex.Substring(i, 2);
-            hexIntArray[i / 2] = Convert.ToInt32(hexString, 16);
+
+            try
+            {
+                hexIntArray[i / 2] = Convert.ToInt32(hexString, 16);
+            }
+            catch
+            {
+                throw new ArgumentException($"ArgumentException: {hex}. Not a valid hex code.");
+            }
         }
 
         return hexIntArray;

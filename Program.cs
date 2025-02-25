@@ -1,9 +1,14 @@
-﻿// Calculates the contrast ratio between two colours.
+﻿// Calculates the contrast ratio between two colors.
 // For details, see https://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html#contrast-ratiodef
 using System.CommandLine;
 
 class Program
 {
+    /// <summary>
+    /// A CLI interface for calculating the contrast ratio between two colors.
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
     static async Task Main(string[] args)
     {
         var firstArgument = new Argument<string>
@@ -15,7 +20,7 @@ class Program
             (name: "L2",
             description: "See L1.");
 
-        var rootCommand = new RootCommand("A CLI app for calculating the contrast ratio between two colours. Supports hex and comma-separated RGB. For details, see: " +
+        var rootCommand = new RootCommand("A CLI app for calculating the contrast ratio between two colors. Supports hex and comma-separated RGB. For details, see: " +
                                           "https://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html#contrast-ratiodef");
         rootCommand.Add(firstArgument);
         rootCommand.Add(secondArgument);
@@ -36,6 +41,12 @@ class Program
         await rootCommand.InvokeAsync(args);
     }
 
+    /// <summary>
+    /// Calculates the contrast ratio between two colors in hex or RGB string form.
+    /// </summary>
+    /// <param name="l1"></param>
+    /// <param name="l2"></param>
+    /// <returns>A double between 1 (for the ratio of two colors with equal luminance) and 21 (for the ratio between pure black and pure white).</returns>
     static double ContrastRatio(string l1, string l2)
     {
         int[] l1Array = ParseColor(l1);
@@ -47,6 +58,12 @@ class Program
         return ContrastRatio(l1Luminance, l2Luminance);
     }
 
+    /// <summary>
+    /// Calculates the contrast ratio between the relative luminances of two colors.
+    /// </summary>
+    /// <param name="l1"></param>
+    /// <param name="l2"></param>
+    /// <returns>A double between 1 (for the ratio of two colors with equal luminance) and 21 (for the ratio between pure black and pure white).</returns>
     static double ContrastRatio(double l1, double l2)
     {
         l1 += 0.05;
@@ -55,6 +72,13 @@ class Program
         return l1 > l2 ? l1 / l2 : l2 / l1;
     }
 
+    /// <summary>
+    /// Calculates the relative luminance of an RGB color code.
+    /// </summary>
+    /// <param name="r"></param>
+    /// <param name="g"></param>
+    /// <param name="b"></param>
+    /// <returns>A double between 0 (for pure black) and 1 (for pure white).</returns>
     static double RelativeLuminance(int r, int g, int b)
     {
         double rr = PartialLuminance(r / 255.0);
@@ -64,6 +88,11 @@ class Program
         return 0.2126 * rr + 0.7152 * gg + 0.0722 * bb;
     }
 
+    /// <summary>
+    /// Calculates the relative luminance of a single color channel.
+    /// </summary>
+    /// <param name="color"></param>
+    /// <returns></returns>
     static double PartialLuminance(double color)
     {
         if (color <= 0.03928)
@@ -76,6 +105,12 @@ class Program
         }
     }
 
+    /// <summary>
+    /// Converts the string representation of a hex or RGB color code to an int array containing its equivalent RGB values.              
+    /// </summary>
+    /// <param name="color"></param>
+    /// <returns>An int array containing three values, each between 0 and 255.</returns>
+    /// <exception cref="FormatException"></exception>
     static int[] ParseColor(string color)
     {
         string originalColor = color;
@@ -103,6 +138,12 @@ class Program
         }
     }
 
+    /// <summary>
+    /// Converts the comma-separated string representation of an RGB color code to an equivalent int array.
+    /// </summary>
+    /// <param name="rgb"></param>
+    /// <returns>An int array containing three values, each between 0 and 255.</returns>
+    /// <exception cref="FormatException"></exception>
     static int[] ParseRGBString(string rgb)
     {
         string[] rgbStringArray = rgb.Split(",");
@@ -117,6 +158,12 @@ class Program
         return rgbIntArray;
     }
 
+    /// <summary>
+    /// Converts the string representation of a hex color code to an int array containing its RGB equivalent.
+    /// </summary>
+    /// <param name="hex"></param>
+    /// <returns>An int array containing three values, each between 0 and 255.</returns>
+    /// <exception cref="FormatException"></exception>
     static int[] ParseHexString(string hex)
     {
         int[] hexIntArray = [0, 0, 0];

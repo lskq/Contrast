@@ -9,13 +9,14 @@ class Program
     {
         var firstArgument = new Argument<string>
             (name: "L1",
-            description: "A comma-separated RGB color code.\nE.g.: 255,0,128");
+            description: "A hex or comma-separated RGB color code." +
+                         "\nE.g.: FF0080\n      255,0,128");
 
         var secondArgument = new Argument<string>
             (name: "L2",
             description: "See L1.");
 
-        var rootCommand = new RootCommand("A CLI app for calculating the contrast ratio between two colours. For details, see: " +
+        var rootCommand = new RootCommand("A CLI app for calculating the contrast ratio between two colours. Supports hex and comma-separated RGB. For details, see: " +
                                           "https://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html#contrast-ratiodef");
         rootCommand.Add(firstArgument);
         rootCommand.Add(secondArgument);
@@ -31,10 +32,10 @@ class Program
 
     static double ContrastRatio(string l1, string l2)
     {
-        int[] l1Array = parseRGBString(l1);
+        int[] l1Array = ParseColor(l1);
         double l1Luminance = RelativeLuminance(l1Array[0], l1Array[1], l1Array[2]);
 
-        int[] l2Array = parseRGBString(l2);
+        int[] l2Array = ParseColor(l2);
         double l2Luminance = RelativeLuminance(l2Array[0], l2Array[1], l2Array[2]);
 
         return ContrastRatio(l1Luminance, l2Luminance);
@@ -70,7 +71,30 @@ class Program
         }
     }
 
-    static int[] parseRGBString(string rgb)
+    static int[] ParseColor(string color)
+    {
+        string originalColor = color;
+
+        if (color.StartsWith('#')) // Might never trigger?
+        {
+            color = color[1..];
+        }
+        else if (color.StartsWith("0x"))
+        {
+            color = color[2..];
+        }
+
+        if (color.Split(",").Length == 3)
+        {
+            return ParseRGBString(color);
+        }
+        else
+        {
+            return ParseHexString(color);
+        }
+    }
+
+    static int[] ParseRGBString(string rgb)
     {
         string[] rgbStringArray = rgb.Split(",");
         int[] rgbIntArray = [0, 0, 0];
@@ -81,5 +105,18 @@ class Program
         }
 
         return rgbIntArray;
+    }
+
+    static int[] ParseHexString(string hex)
+    {
+        int[] hexIntArray = [0, 0, 0];
+
+        for (int i = 0; i < 5; i += 2)
+        {
+            string hexString = hex.Substring(i, 2);
+            hexIntArray[i / 2] = Convert.ToInt32(hexString, 16);
+        }
+
+        return hexIntArray;
     }
 }

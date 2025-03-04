@@ -1,11 +1,12 @@
-﻿// Calculates the contrast ratio between two colors.
-// For details, see https://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html#contrast-ratiodef
-using System.CommandLine;
+﻿using System.CommandLine;
+
+namespace Contrast;
 
 class Program
 {
     /// <summary>
     /// A CLI interface for calculating the contrast ratio between two colors.
+    /// For details, see https://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html#contrast-ratiodef
     /// </summary>
     /// <param name="args"></param>
     /// <returns></returns>
@@ -63,7 +64,7 @@ class Program
     /// </summary>
     /// <param name="l1"></param>
     /// <param name="l2"></param>
-    /// <returns>A double between 1 (for the ratio of two colors with equal luminance) and 21 (for the ratio between pure black and pure white).</returns>
+    /// <returns>A double between 1 (for two equal luminances) and 21 (for the luminances of pure black and pure white).</returns>
     static double ContrastRatio(double l1, double l2)
     {
         l1 += 0.05;
@@ -92,7 +93,7 @@ class Program
     /// Calculates the relative luminance of a single color channel.
     /// </summary>
     /// <param name="color"></param>
-    /// <returns></returns>
+    /// <returns>A double</returns>
     static double PartialLuminance(double color)
     {
         if (color <= 0.03928)
@@ -134,7 +135,7 @@ class Program
         }
         else
         {
-            throw new FormatException($"FormatException: {originalColor}. Not formated like a hex code or comma-separated RGB value.");
+            throw new FormatException($"FormatException: {originalColor}. Not a valid hex code or comma-separated RGB value.");
         }
     }
 
